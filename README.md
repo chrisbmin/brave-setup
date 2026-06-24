@@ -2,9 +2,8 @@
 
 One-liner scripts that configure Brave Browser the way I like it: Leo AI off, the
 Web3 Wallet off, Rewards/VPN/News/Talk off, promo nags suppressed (Sync stays on),
-Widevine DRM playback on, and a set of appearance/search preferences (home button,
-wide address bar, full URLs, rounded corners, search suggestions, Web Discovery)
-turned on.
+Widevine DRM playback on, and a set of appearance/search preferences (wide address
+bar, full URLs, rounded corners, search suggestions, Web Discovery) turned on.
 
 Settings that should be fully removed/locked use Brave/Chromium's official
 enterprise policy mechanism (registry on Windows, managed-preferences plist on
@@ -15,16 +14,20 @@ own JSON pref files instead, so nothing gets enterprise-locked unnecessarily. Se
 [`policies-reference.md`](policies-reference.md) for the full list of keys, values,
 and sources.
 
-Two settings from the original wishlist (Shields → Block fingerprinting, and the
-default search engine for Normal/Private windows) have no safe, stable key to
-script - see the bottom of [`policies-reference.md`](policies-reference.md) for why
-and the couple of clicks needed to set them by hand.
-
 If Brave isn't installed yet, the setup script checks for it first and stops: it
 prints a reminder to grab it from [brave.com/download](https://brave.com/download/),
 launch it once, and re-run the script — none of the settings apply until Brave has
 actually been installed and run, so there's no point continuing further. (The
 revert/uninstall paths skip this check, since they don't need Brave to be present.)
+
+### Manual Steps
+Three settings need to be configured manually in Settings: 
+1. Appearance → Show home button 
+2. Shields → Block fingerprinting
+3. Search engine → the default search engine for Normal/Private windows set to Brave
+Unfortunately, there is no safe, stable key to script on for these settings, so we'll set them manually — see the bottom of
+[`policies-reference.md`](policies-reference.md) for why and the couple of clicks
+needed to set them by hand.
 
 **Before piping any of this into your shell**: read the script first. That's good
 practice for any `irm | iex` / `curl | bash` installer, not just this one - all

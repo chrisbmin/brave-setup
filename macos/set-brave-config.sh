@@ -9,9 +9,8 @@
 #   tabs)
 # - direct edits to Brave's JSON pref files for plain preferences that have
 #   no policy equivalent and shouldn't be enterprise-locked (Widevine in
-#   Local State; home button / wide address bar / full URLs / rounded
-#   corners / search suggestions / web discovery in the profile Preferences
-#   file)
+#   Local State; wide address bar / full URLs / rounded corners / search
+#   suggestions / web discovery in the profile Preferences file)
 #
 # See ../policies-reference.md for the full list and sources.
 #
@@ -52,9 +51,12 @@ LOCAL_STATE_ON_VALUES=(true false)
 LOCAL_STATE_OFF_VALUES=(false true)
 
 # dotted JSON path in the profile Preferences file -> On/Off values (Off = upstream default)
-PROFILE_KEYS=(browser.show_home_button brave.location_bar_is_wide omnibox.prevent_url_elisions brave.web_view_rounded_corners search.suggest_enabled brave.web_discovery_enabled)
-PROFILE_ON_VALUES=(true true true true true true)
-PROFILE_OFF_VALUES=(false false false true true false)
+# Note: browser.show_home_button is deliberately NOT here - it's one of Chromium's
+# tamper-protected prefs (see ../policies-reference.md), so editing it directly gets
+# silently reset by Brave's "settings changed from outside" protection.
+PROFILE_KEYS=(brave.location_bar_is_wide omnibox.prevent_url_elisions brave.web_view_rounded_corners search.suggest_enabled brave.web_discovery_enabled)
+PROFILE_ON_VALUES=(true true true true true)
+PROFILE_OFF_VALUES=(false false true true false)
 
 is_brave_installed() {
     [[ -d "/Applications/Brave Browser.app" ]]
@@ -232,10 +234,11 @@ if [[ "$DRY_RUN" -eq 0 ]]; then
     echo "Done. Start Brave and check:"
     echo "  brave://policy              (confirm the policies above are listed as 'Applied')"
     echo "  brave://settings/extensions (confirm Widevine is enabled)"
-    echo "  brave://settings/appearance (confirm home button / wide address bar / full URLs / rounded corners)"
+    echo "  brave://settings/appearance (confirm wide address bar / full URLs / rounded corners)"
     echo "  brave://settings/search     (confirm search suggestions / web discovery)"
     echo ""
-    echo "Not scripted (no safe pref/policy path - set these by hand once):"
-    echo "  brave://settings/shields -> Block fingerprinting -> On"
-    echo "  brave://settings/search  -> Default search engine (Normal and Private window) -> Brave"
+    echo "Not scripted (set these by hand once):"
+    echo "  brave://settings/appearance -> Show home button -> On  (tamper-protected pref, gets reset if set directly)"
+    echo "  brave://settings/shields    -> Block fingerprinting -> On"
+    echo "  brave://settings/search     -> Default search engine (Normal and Private window) -> Brave"
 fi

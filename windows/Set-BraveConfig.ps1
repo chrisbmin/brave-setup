@@ -8,9 +8,8 @@
     fully removed (Leo AI, Wallet, Rewards, VPN, News, Talk, promo tabs)
   - direct edits to Brave's JSON pref files for plain preferences that have
     no policy equivalent and shouldn't be enterprise-locked (Widevine in
-    Local State; home button / wide address bar / full URLs / rounded
-    corners / search suggestions / web discovery in the profile
-    Preferences file)
+    Local State; wide address bar / full URLs / rounded corners / search
+    suggestions / web discovery in the profile Preferences file)
 
   See ../policies-reference.md for the full list and sources.
 
@@ -51,8 +50,10 @@ $LocalStatePrefs = [ordered]@{
 }
 
 # dotted JSON path in the profile Preferences file -> On/Off values (Off = upstream default)
+# Note: 'browser.show_home_button' is deliberately NOT here - it's one of Chromium's
+# tamper-protected prefs (see ../policies-reference.md), so editing it directly gets
+# silently reset by Brave's "settings changed from outside" protection.
 $ProfilePrefs = [ordered]@{
-    'browser.show_home_button'      = @{ On = $true; Off = $false }  # Show home button
     'brave.location_bar_is_wide'    = @{ On = $true; Off = $false }  # Use wide address bar
     'omnibox.prevent_url_elisions'  = @{ On = $true; Off = $false }  # Always show full URLs
     'brave.web_view_rounded_corners'= @{ On = $true; Off = $true  }  # Rounded corners (already the upstream default)
@@ -267,10 +268,11 @@ if (-not $DryRun) {
     Write-Host "Done. Start Brave and check:" -ForegroundColor Green
     Write-Host "  brave://policy              (confirm the policies above are listed as 'Applied')"
     Write-Host "  brave://settings/extensions (confirm Widevine is enabled)"
-    Write-Host "  brave://settings/appearance (confirm home button / wide address bar / full URLs / rounded corners)"
+    Write-Host "  brave://settings/appearance (confirm wide address bar / full URLs / rounded corners)"
     Write-Host "  brave://settings/search     (confirm search suggestions / web discovery)"
     Write-Host ""
-    Write-Host "Not scripted (no safe pref/policy path - set these by hand once):" -ForegroundColor Yellow
-    Write-Host "  brave://settings/shields -> Block fingerprinting -> On"
-    Write-Host "  brave://settings/search  -> Default search engine (Normal and Private window) -> Brave"
+    Write-Host "Not scripted (set these by hand once):" -ForegroundColor Yellow
+    Write-Host "  brave://settings/appearance -> Show home button -> On  (tamper-protected pref, gets reset if set directly)"
+    Write-Host "  brave://settings/shields    -> Block fingerprinting -> On"
+    Write-Host "  brave://settings/search     -> Default search engine (Normal and Private window) -> Brave"
 }

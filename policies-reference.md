@@ -62,7 +62,6 @@ that should be enterprise-locked/grayed-out — so they're written directly into
 
 | Key | Value set | Settings UI toggle | Upstream default (used on `--uninstall`) |
 |---|---|---|---|
-| `browser.show_home_button` | `true` | Appearance → Show home button | `false` |
 | `brave.location_bar_is_wide` | `true` | Appearance → Use wide address bar | `false` |
 | `omnibox.prevent_url_elisions` | `true` | Appearance → Always show full URLs | `false` |
 | `brave.web_view_rounded_corners` | `true` | Appearance → Show rounded corners on main content areas | `true` (already Brave's default) |
@@ -78,6 +77,19 @@ and
 Both scripts back up `Preferences` to `Preferences.bak` before editing it, and close
 Brave first.
 
+**`browser.show_home_button` is deliberately not in this list.** Chromium maintains
+a tamper-protection layer for a small set of historically hijacking-prone prefs
+(home button, homepage, default search, extension state, etc.): each protected
+pref's value is paired with an HMAC in a `protection.macs` block elsewhere in the
+same `Preferences` file, computed from a per-install seed embedded in Brave's
+binary resources plus an OS-derived machine ID. Editing the value directly without
+recomputing that HMAC (which isn't practically reproducible outside the browser
+itself) gets detected as "changed from outside" on next launch — confirmed in
+practice, Brave silently reset `show_home_button` back to off and showed a "Brave
+reset these settings" notice. The other five prefs above aren't on Chromium's
+protected list, so they apply cleanly. `Show home button` is moved to the
+hand-set checklist below instead.
+
 ## Installing Brave (when it's missing)
 
 `Set-BraveConfig.ps1` / `set-brave-config.sh` check whether Brave is already
@@ -91,8 +103,10 @@ entirely, since reverting doesn't require Brave to be present.
 
 ### Not scripted — set these by hand
 
-Two settings from the original request have no safe, stable key to write:
+Three settings from the original request have no safe, stable key to write:
 
+- **Appearance → Show home button**: a Chromium tamper-protected pref (see above) —
+  setting it directly gets silently reset on next launch.
 - **Shields → Block fingerprinting**: the toggle calls a live backend API
   (`setFingerprintingControlType` / `setFingerprintingBlockEnabled`) rather than
   reading/writing a simple stored pref, so there's no JSON key to set reliably.
@@ -103,7 +117,8 @@ Two settings from the original request have no safe, stable key to write:
   [confirmed unreliable for selecting Brave's built-in entry](https://community.brave.app/t/make-it-easy-to-make-brave-search-the-default-search-provider-with-chromium-policy/505274)
   by Brave's own community.
 
-Both are a couple of clicks in `brave://settings/shields` and `brave://settings/search`.
+All three are a couple of clicks in `brave://settings/appearance`,
+`brave://settings/shields`, and `brave://settings/search`.
 
 ## Full uninstall (`Uninstall-Brave.ps1` / `uninstall-brave.sh`)
 
