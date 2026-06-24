@@ -25,6 +25,7 @@ Three settings need to be configured manually in Settings:
 1. Appearance → Show home button 
 2. Shields → Block fingerprinting
 3. Search engine → the default search engine for Normal/Private windows set to Brave
+
 Unfortunately, there is no safe, stable key to script on for these settings, so we'll set them manually — see the bottom of
 [`policies-reference.md`](policies-reference.md) for why and the couple of clicks
 needed to set them by hand.
