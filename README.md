@@ -44,7 +44,7 @@ four scripts are short and plain text, linked below.
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1 | iex
+irm https://cbmn.link/brave-setup-win | iex
 ```
 
 The script will relaunch itself elevated (UAC prompt) since writing the policy
@@ -55,7 +55,7 @@ launch it once, then re-run.
 ### macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash
+curl -fsSL https://cbmn.link/brave-setup-mac | sudo bash
 ```
 
 `sudo` is required up front to write the managed-preferences plist. If Brave isn't
@@ -70,21 +70,21 @@ custom domain or bit.ly/tinyurl) for easier typing/sharing.
 See what would change without writing anything:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1))) -DryRun
+& ([scriptblock]::Create((irm https://cbmn.link/brave-setup-win))) -DryRun
 ```
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --dry-run
+curl -fsSL https://cbmn.link/brave-setup-mac | sudo bash -s -- --dry-run
 ```
 
 ## Revert settings only (keeps Brave installed)
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://cbmn.link/brave-setup-win))) -Uninstall
 ```
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --uninstall
+curl -fsSL https://cbmn.link/brave-setup-mac | sudo bash -s -- --uninstall
 ```
 
 This removes the policy keys/values this repo adds and reverts the JSON pref edits
@@ -98,11 +98,11 @@ toggle) to confirm.
 ## Full uninstall (removes Brave and all its data)
 
 ```powershell
-irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Uninstall-Brave.ps1 | iex
+irm https://cbmn.link/brave-remove-win | iex
 ```
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/uninstall-brave.sh | sudo bash
+curl -fsSL https://cbmn.link/brave-setup-mac | sudo bash
 ```
 
 **This is destructive and irreversible.** It removes the Brave application itself
