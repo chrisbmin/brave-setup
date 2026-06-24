@@ -150,13 +150,27 @@ function Remove-LeftoverData {
         }
     }
 
-    $tasks = Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object { $_.TaskName -like '*Brave*' }
+    # Get-ScheduledTask talks to the CIM/WMI service, which can throw a terminating
+    # error (e.g. "Access is denied", common in locked-down/sandboxed environments)
+    # that ignores -ErrorAction entirely - so this needs a real try/catch, not just
+    # -ErrorAction SilentlyContinue.
+    $tasks = @()
+    try {
+        $tasks = Get-ScheduledTask -ErrorAction Stop | Where-Object { $_.TaskName -like '*Brave*' }
+    } catch {
+        Write-Host "Could not query scheduled tasks (skipping): $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+
     foreach ($task in $tasks) {
         if ($DryRun) {
             Write-Host "[DryRun] Would remove scheduled task: $($task.TaskName)"
         } else {
-            Unregister-ScheduledTask -TaskName $task.TaskName -Confirm:$false -ErrorAction SilentlyContinue
-            Write-Host "Removed scheduled task: $($task.TaskName)"
+            try {
+                Unregister-ScheduledTask -TaskName $task.TaskName -Confirm:$false -ErrorAction Stop
+                Write-Host "Removed scheduled task: $($task.TaskName)"
+            } catch {
+                Write-Host "Could not remove scheduled task $($task.TaskName): $($_.Exception.Message)" -ForegroundColor Yellow
+            }
         }
     }
 }
