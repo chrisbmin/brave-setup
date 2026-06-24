@@ -8,7 +8,7 @@ turned on.
 
 Settings that should be fully removed/locked use Brave/Chromium's official
 enterprise policy mechanism (registry on Windows, managed-preferences plist on
-macOS) — the same mechanism IT departments use, and it survives Brave updates.
+macOS) - This is the same mechanism IT departments use, and it survives Brave updates.
 Plain preferences that you should still be able to change later via the Settings
 UI (Widevine, and the appearance/search toggles) are written directly into Brave's
 own JSON pref files instead, so nothing gets enterprise-locked unnecessarily. See
@@ -21,12 +21,12 @@ script — see the bottom of [`policies-reference.md`](policies-reference.md) fo
 and the couple of clicks needed to set them by hand.
 
 If Brave isn't installed yet, the setup script checks for it first and just prints
-a reminder to grab it from [brave.com/download](https://brave.com/download/) —
+a reminder to grab it from [brave.com/download](https://brave.com/download/) - 
 policy settings still get applied either way, and the JSON pref edits take effect
 the first time you run Brave afterward.
 
 **Before piping any of this into your shell**: read the script first. That's good
-practice for any `irm | iex` / `curl | bash` installer, not just this one — all
+practice for any `irm | iex` / `curl | bash` installer, not just this one - all
 four scripts are short and plain text, linked below.
 
 - [`windows/Set-BraveConfig.ps1`](windows/Set-BraveConfig.ps1)
@@ -43,8 +43,8 @@ irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-Bra
 ```
 
 The script will relaunch itself elevated (UAC prompt) since writing the policy
-requires admin rights. If Brave isn't found, it'll print a link to
-[brave.com/download](https://brave.com/download/) and continue applying the
+requires admin rights. If Brave isn't found, the script prints a link to
+[brave.com/download](https://brave.com/download/) and continues applying the
 policy settings anyway.
 
 ### macOS
