@@ -17,7 +17,7 @@ and sources.
 
 Two settings from the original wishlist (Shields → Block fingerprinting, and the
 default search engine for Normal/Private windows) have no safe, stable key to
-script — see the bottom of [`policies-reference.md`](policies-reference.md) for why
+script - see the bottom of [`policies-reference.md`](policies-reference.md) for why
 and the couple of clicks needed to set them by hand.
 
 If Brave isn't installed yet, the setup script checks for it first and just prints
