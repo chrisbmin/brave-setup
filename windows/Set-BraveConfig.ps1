@@ -22,7 +22,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # Used to re-launch elevated when invoked via `irm <url> | iex` (no local file path to relaunch from).
-$ScriptUrl = 'https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/windows/Set-BraveConfig.ps1'
+$ScriptUrl = 'https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1'
 
 $PolicyPath = 'HKLM:\SOFTWARE\Policies\BraveSoftware\Brave'
 
