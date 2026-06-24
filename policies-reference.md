@@ -50,3 +50,46 @@ in [`brave-core/components/constants/pref_names.h`](https://github.com/brave/bra
 
 Both scripts back up `Local State` to `Local State.bak` before editing it, and close
 Brave first so it can't overwrite the edit on exit.
+
+## Profile preferences (no policy equivalent, and shouldn't be locked)
+
+These are plain appearance/search preferences — defaults you'd set once, not things
+that should be enterprise-locked/grayed-out — so they're written directly into the
+**profile** `Preferences` file (the "Default" profile) rather than via policy:
+
+- Windows: `%LOCALAPPDATA%\BraveSoftware\Brave-Browser\User Data\Default\Preferences`
+- macOS: `~/Library/Application Support/BraveSoftware/Brave-Browser/Default/Preferences`
+
+| Key | Value set | Settings UI toggle | Upstream default (used on `--uninstall`) |
+|---|---|---|---|
+| `browser.show_home_button` | `true` | Appearance → Show home button | `false` |
+| `brave.location_bar_is_wide` | `true` | Appearance → Use wide address bar | `false` |
+| `omnibox.prevent_url_elisions` | `true` | Appearance → Always show full URLs | `false` |
+| `brave.web_view_rounded_corners` | `true` | Appearance → Show rounded corners on main content areas | `true` (already Brave's default) |
+| `search.suggest_enabled` | `true` | Search → Improve search suggestions | `true` (already Chromium's default) |
+| `brave.web_discovery_enabled` | `true` | Search → Web Discovery Project | `false` |
+
+Key names confirmed directly from Brave's settings-page source (`pref="{{prefs.X}}"`
+bindings), not guessed:
+[`browser/resources/settings/brave_appearance_page/toolbar.html`](https://github.com/brave/brave-core/blob/master/browser/resources/settings/brave_appearance_page/toolbar.html)
+and
+[`browser/resources/settings/brave_search_engines_page/brave_search_engines_page.html`](https://github.com/brave/brave-core/blob/master/browser/resources/settings/brave_search_engines_page/brave_search_engines_page.html).
+
+Both scripts back up `Preferences` to `Preferences.bak` before editing it, and close
+Brave first.
+
+### Not scripted — set these by hand
+
+Two settings from the original request have no safe, stable key to write:
+
+- **Shields → Block fingerprinting**: the toggle calls a live backend API
+  (`setFingerprintingControlType` / `setFingerprintingBlockEnabled`) rather than
+  reading/writing a simple stored pref, so there's no JSON key to set reliably.
+- **Default search engine (Normal and Private window) → Brave**: resolved by
+  *list index* at runtime against a dynamically-built engine list
+  (`setDefaultPrivateSearchEngine(modelIndex)`), not a stable pref or GUID. The
+  Chromium policy route (`DefaultSearchProviderName`/`...SearchURL`) is also
+  [confirmed unreliable for selecting Brave's built-in entry](https://community.brave.app/t/make-it-easy-to-make-brave-search-the-default-search-provider-with-chromium-policy/505274)
+  by Brave's own community.
+
+Both are a couple of clicks in `brave://settings/shields` and `brave://settings/search`.

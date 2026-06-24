@@ -2,14 +2,23 @@
 
 One-liner scripts that configure Brave Browser the way I like it: Leo AI off, the
 Web3 Wallet off, Rewards/VPN/News/Talk off, promo nags suppressed (Sync stays on),
-and Widevine DRM playback turned on.
+Widevine DRM playback on, and a set of appearance/search preferences (home button,
+wide address bar, full URLs, rounded corners, search suggestions, Web Discovery)
+turned on.
 
-Settings are applied via Brave/Chromium's official enterprise policy mechanism
-(registry on Windows, managed-preferences plist on macOS) wherever possible, since
-that's the same mechanism IT departments use and it survives Brave updates. The one
-exception is Widevine, which has no policy and is set directly in Brave's
-`Local State` file. See [`policies-reference.md`](policies-reference.md) for the
-full list of keys, values, and sources.
+Settings that should be fully removed/locked use Brave/Chromium's official
+enterprise policy mechanism (registry on Windows, managed-preferences plist on
+macOS) — the same mechanism IT departments use, and it survives Brave updates.
+Plain preferences that you should still be able to change later via the Settings
+UI (Widevine, and the appearance/search toggles) are written directly into Brave's
+own JSON pref files instead, so nothing gets enterprise-locked unnecessarily. See
+[`policies-reference.md`](policies-reference.md) for the full list of keys, values,
+and sources.
+
+Two settings from the original wishlist (Shields → Block fingerprinting, and the
+default search engine for Normal/Private windows) have no safe, stable key to
+script — see the bottom of [`policies-reference.md`](policies-reference.md) for why
+and the couple of clicks needed to set them by hand.
 
 **Before piping any of this into your shell**: read the script first. That's good
 practice for any `irm | iex` / `curl | bash` installer, not just this one — both
