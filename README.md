@@ -102,7 +102,7 @@ irm https://cbmn.link/brave-remove-win | iex
 ```
 
 ```bash
-curl -fsSL https://cbmn.link/brave-setup-mac | sudo bash
+curl -fsSL https://cbmn.link/brave-remove-mac | sudo bash
 ```
 
 **This is destructive and irreversible.** It removes the Brave application itself
