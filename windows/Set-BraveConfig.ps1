@@ -106,18 +106,14 @@ function Test-BraveInstalled {
 }
 
 function Show-InstallReminder {
-    if (Test-BraveInstalled) { return }
-
-    if ($DryRun) {
-        Write-Host "[DryRun] Brave not detected. Would print a reminder to download it manually."
-        return
-    }
+    if (Test-BraveInstalled) { return $true }
 
     Write-Host ""
     Write-Host "Brave Browser was not found on this system." -ForegroundColor Yellow
     Write-Host "Download and install it from: https://brave.com/download/"
-    Write-Host "Policy settings will still be applied; profile preferences will be skipped until Brave has run at least once."
+    Write-Host "Launch Brave at least once, then re-run this script to apply settings."
     Write-Host ""
+    return $false
 }
 
 function Set-Policies {
@@ -258,7 +254,7 @@ if ($Uninstall) {
     Set-JsonFilePrefs -Path (Get-LocalStatePath) -Prefs $LocalStatePrefs -Enable $false
     Set-JsonFilePrefs -Path (Get-ProfilePreferencesPath) -Prefs $ProfilePrefs -Enable $false
 } else {
-    Show-InstallReminder
+    if (-not (Show-InstallReminder)) { return }
     Write-Host "Applying Brave policy settings..." -ForegroundColor Cyan
     Stop-Brave
     Set-Policies

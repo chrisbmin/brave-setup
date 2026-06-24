@@ -61,18 +61,14 @@ is_brave_installed() {
 }
 
 show_install_reminder() {
-    if is_brave_installed; then return; fi
-
-    if [[ "$DRY_RUN" -eq 1 ]]; then
-        echo "[DryRun] Brave not detected. Would print a reminder to download it manually."
-        return
-    fi
+    if is_brave_installed; then return 0; fi
 
     echo ""
     echo "Brave Browser was not found on this system."
     echo "Download and install it from: https://brave.com/download/"
-    echo "Policy settings will still be applied; profile preferences will be skipped until Brave has run at least once."
+    echo "Launch Brave at least once, then re-run this script to apply settings."
     echo ""
+    return 1
 }
 
 stop_brave() {
@@ -218,7 +214,9 @@ stop_brave
 if [[ "$UNINSTALL" -eq 1 ]]; then
     remove_policies
 else
-    show_install_reminder
+    if ! show_install_reminder; then
+        exit 0
+    fi
     apply_policies
 fi
 

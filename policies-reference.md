@@ -81,10 +81,13 @@ Brave first.
 ## Installing Brave (when it's missing)
 
 `Set-BraveConfig.ps1` / `set-brave-config.sh` check whether Brave is already
-installed. If it's missing, they just print a link to
-[brave.com/download](https://brave.com/download/) and continue — policy settings
-are still applied (harmless either way), and the JSON pref edits just no-op until
-Brave has been installed and run at least once.
+installed before doing anything else. If it's missing, they print a link to
+[brave.com/download](https://brave.com/download/) and stop — confirmed empirically
+that none of the settings take effect until Brave has actually been installed and
+run at least once (the profile `Preferences`/`Local State` files don't exist yet),
+so there's nothing useful to do until then. Install Brave, launch it once, then
+re-run the script. The `-Uninstall`/`--uninstall` revert path skips this check
+entirely, since reverting doesn't require Brave to be present.
 
 ### Not scripted — set these by hand
 

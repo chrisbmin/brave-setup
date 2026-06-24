@@ -20,10 +20,11 @@ default search engine for Normal/Private windows) have no safe, stable key to
 script - see the bottom of [`policies-reference.md`](policies-reference.md) for why
 and the couple of clicks needed to set them by hand.
 
-If Brave isn't installed yet, the setup script checks for it first and just prints
-a reminder to grab it from [brave.com/download](https://brave.com/download/) - 
-policy settings still get applied either way, and the JSON pref edits take effect
-the first time you run Brave afterward.
+If Brave isn't installed yet, the setup script checks for it first and stops: it
+prints a reminder to grab it from [brave.com/download](https://brave.com/download/),
+launch it once, and re-run the script — none of the settings apply until Brave has
+actually been installed and run, so there's no point continuing further. (The
+revert/uninstall paths skip this check, since they don't need Brave to be present.)
 
 **Before piping any of this into your shell**: read the script first. That's good
 practice for any `irm | iex` / `curl | bash` installer, not just this one - all
@@ -43,9 +44,9 @@ irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-Bra
 ```
 
 The script will relaunch itself elevated (UAC prompt) since writing the policy
-requires admin rights. If Brave isn't found, the script prints a link to
-[brave.com/download](https://brave.com/download/) and continues applying the
-policy settings anyway.
+requires admin rights. If Brave isn't found, it prints a link to
+[brave.com/download](https://brave.com/download/) and stops — install Brave,
+launch it once, then re-run.
 
 ### macOS
 
@@ -54,8 +55,8 @@ curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/se
 ```
 
 `sudo` is required up front to write the managed-preferences plist. If Brave isn't
-found, it'll print a link to [brave.com/download](https://brave.com/download/) and
-continue applying the policy settings anyway.
+found, it prints a link to [brave.com/download](https://brave.com/download/) and
+stops — install Brave, launch it once, then re-run.
 
 Once the repo is public, wrap either raw URL above in a shortlink (e.g. a
 custom domain or bit.ly/tinyurl) for easier typing/sharing.
