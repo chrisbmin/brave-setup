@@ -23,7 +23,7 @@ scripts are short and plain text, linked below.
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/windows/Set-BraveConfig.ps1 | iex
+irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1 | iex
 ```
 
 The script will relaunch itself elevated (UAC prompt) since writing the policy
@@ -32,7 +32,7 @@ requires admin rights.
 ### macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/macos/set-brave-config.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash
 ```
 
 `sudo` is required up front to write the managed-preferences plist.
@@ -45,21 +45,21 @@ custom domain or bit.ly/tinyurl) for easier typing/sharing.
 See what would change without writing anything:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/windows/Set-BraveConfig.ps1))) -DryRun
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1))) -DryRun
 ```
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --dry-run
+curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --dry-run
 ```
 
 ## Uninstall / revert
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/windows/Set-BraveConfig.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1))) -Uninstall
 ```
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/REPLACE_ME/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --uninstall
 ```
 
 This removes the policy keys/values this repo adds and reverts the Widevine
