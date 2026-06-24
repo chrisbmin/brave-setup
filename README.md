@@ -20,12 +20,19 @@ default search engine for Normal/Private windows) have no safe, stable key to
 script — see the bottom of [`policies-reference.md`](policies-reference.md) for why
 and the couple of clicks needed to set them by hand.
 
+If Brave isn't installed yet, the setup script checks for it first and asks before
+doing anything: install now (and via winget/Homebrew cask or a direct download), or
+skip and just apply the settings for next time. It never installs anything without
+that prompt.
+
 **Before piping any of this into your shell**: read the script first. That's good
-practice for any `irm | iex` / `curl | bash` installer, not just this one — both
-scripts are short and plain text, linked below.
+practice for any `irm | iex` / `curl | bash` installer, not just this one — all
+four scripts are short and plain text, linked below.
 
 - [`windows/Set-BraveConfig.ps1`](windows/Set-BraveConfig.ps1)
+- [`windows/Uninstall-Brave.ps1`](windows/Uninstall-Brave.ps1)
 - [`macos/set-brave-config.sh`](macos/set-brave-config.sh)
+- [`macos/uninstall-brave.sh`](macos/uninstall-brave.sh)
 
 ## Install
 
@@ -36,7 +43,9 @@ irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-Bra
 ```
 
 The script will relaunch itself elevated (UAC prompt) since writing the policy
-requires admin rights.
+requires admin rights. If Brave isn't found, it'll ask whether to install it (via
+winget or a direct download of Brave's official standalone installer) before
+applying settings.
 
 ### macOS
 
@@ -44,7 +53,9 @@ requires admin rights.
 curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash
 ```
 
-`sudo` is required up front to write the managed-preferences plist.
+`sudo` is required up front to write the managed-preferences plist. If Brave isn't
+found, it'll ask whether to install it (via a Homebrew cask, installing Homebrew
+itself first if needed, or a direct `.dmg` download) before applying settings.
 
 Once the repo is public, wrap either raw URL above in a shortlink (e.g. a
 custom domain or bit.ly/tinyurl) for easier typing/sharing.
@@ -61,7 +72,7 @@ See what would change without writing anything:
 curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --dry-run
 ```
 
-## Uninstall / revert
+## Revert settings only (keeps Brave installed)
 
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-BraveConfig.ps1))) -Uninstall
@@ -71,9 +82,27 @@ curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/se
 curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/set-brave-config.sh | sudo bash -s -- --uninstall
 ```
 
-This removes the policy keys/values this repo adds and reverts the Widevine
-preference. It does not touch anything else.
+This removes the policy keys/values this repo adds and reverts the JSON pref edits
+back to their upstream defaults. Brave itself, and your profile data, are left
+alone.
 
 After running either script, fully quit and restart Brave, then check
 `brave://policy` (policies applied) and `brave://settings/extensions` (Widevine
 toggle) to confirm.
+
+## Full uninstall (removes Brave and all its data)
+
+```powershell
+irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Uninstall-Brave.ps1 | iex
+```
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/uninstall-brave.sh | sudo bash
+```
+
+**This is destructive and irreversible.** It removes the Brave application itself
+plus all of its data — bookmarks, saved passwords, browsing history, extensions —
+in addition to reverting every setting from above. Both scripts require typing
+`YES` to confirm before doing anything (pass `-Force` / `--force` to skip the
+prompt for scripted/unattended use). Use `-DryRun` / `--dry-run` first if you just
+want to see what would be removed.

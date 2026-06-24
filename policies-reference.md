@@ -78,6 +78,33 @@ and
 Both scripts back up `Preferences` to `Preferences.bak` before editing it, and close
 Brave first.
 
+## Installing Brave (when it's missing)
+
+`Set-BraveConfig.ps1` / `set-brave-config.sh` check whether Brave is already
+installed before touching anything install-related. If it's missing, they prompt
+before doing anything — install now or skip — and if you say yes, prompt again for
+the method:
+
+- **Windows**: `winget install --id Brave.Brave -e --silent` (the official winget
+  package; confirmed via its
+  [manifest](https://github.com/microsoft/winget-pkgs/blob/master/manifests/b/Brave/Brave/137.1.79.119/Brave.Brave.installer.yaml)),
+  or a direct download of Brave's official standalone installer from
+  `https://github.com/brave/brave-browser/releases/latest/download/BraveBrowserStandaloneSetup.exe`
+  run with `/silent /install` (same switches the winget manifest uses internally).
+- **macOS**: `brew install --cask brave-browser` (installing Homebrew itself first,
+  with a separate confirmation, if it's not present), or a direct download of
+  `https://github.com/brave/brave-browser/releases/latest/download/Brave-Browser-universal.dmg`,
+  mounted and copied to `/Applications` directly.
+
+Both download URLs use GitHub's `releases/latest/download/<asset>` redirect, which
+always resolves to the current stable release — confirmed against Brave's actual
+[latest release](https://github.com/brave/brave-browser/releases/latest), not
+guessed or version-pinned.
+
+Declining the install prompt doesn't abort the script — policy settings are still
+applied (harmless either way), and the JSON pref edits just no-op until Brave has
+been installed and run at least once.
+
 ### Not scripted — set these by hand
 
 Two settings from the original request have no safe, stable key to write:
@@ -93,3 +120,25 @@ Two settings from the original request have no safe, stable key to write:
   by Brave's own community.
 
 Both are a couple of clicks in `brave://settings/shields` and `brave://settings/search`.
+
+## Full uninstall (`Uninstall-Brave.ps1` / `uninstall-brave.sh`)
+
+These are separate, standalone scripts (not a flag on the setup script) that remove
+Brave entirely, not just the settings above. Both require typing `YES` to confirm
+before doing anything destructive.
+
+App removal:
+- **Windows**: tries `winget uninstall --id Brave.Brave -e --silent` first, then
+  also looks up Brave's own uninstaller via the registry
+  (`HKLM/HKCU ...\Uninstall\*` where `DisplayName -like 'Brave*'`) and runs its
+  `UninstallString` with `--force-uninstall` appended — covers installs winget
+  doesn't know about (e.g. the direct-download method).
+- **macOS**: `brew uninstall --cask brave-browser --zap` if installed via Homebrew,
+  otherwise deletes `/Applications/Brave Browser.app` directly.
+
+Leftover data removed on both platforms (in addition to the policy/pref keys from
+above): the whole `BraveSoftware` data directory (`%LOCALAPPDATA%`/`%APPDATA%` on
+Windows, `~/Library/Application Support` and `~/Library/Caches` on macOS), saved
+state, the per-user preferences plist on macOS, Start Menu/Desktop shortcuts and
+scheduled tasks on Windows. Compiled from community uninstall guides plus the
+script's own dry-run output checked against this repo's actual dev machine.
