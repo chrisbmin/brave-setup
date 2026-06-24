@@ -56,97 +56,23 @@ PROFILE_KEYS=(browser.show_home_button brave.location_bar_is_wide omnibox.preven
 PROFILE_ON_VALUES=(true true true true true true)
 PROFILE_OFF_VALUES=(false false false true true false)
 
-# Stable, version-independent link to the latest stable universal .dmg
-# (GitHub's releases/latest/download redirect always resolves to the newest stable release).
-BRAVE_DMG_URL="https://github.com/brave/brave-browser/releases/latest/download/Brave-Browser-universal.dmg"
-
 is_brave_installed() {
     [[ -d "/Applications/Brave Browser.app" ]]
 }
 
-# Reads a line from the real terminal even when this script's own stdin is
-# the curl|bash pipe (which is the script source, not the keyboard).
-prompt_tty() {
-    local prompt="$1" reply=""
-    if [[ -r /dev/tty ]]; then
-        read -r -p "$prompt" reply < /dev/tty
-    fi
-    echo "$reply"
-}
-
-run_as_user() {
-    if [[ -n "${SUDO_USER:-}" ]]; then
-        sudo -u "$SUDO_USER" -H "$@"
-    else
-        "$@"
-    fi
-}
-
-find_brew() {
-    if [[ -x /opt/homebrew/bin/brew ]]; then
-        echo /opt/homebrew/bin/brew
-    elif [[ -x /usr/local/bin/brew ]]; then
-        echo /usr/local/bin/brew
-    fi
-}
-
-install_brave() {
+show_install_reminder() {
     if is_brave_installed; then return; fi
 
     if [[ "$DRY_RUN" -eq 1 ]]; then
-        echo "[DryRun] Brave not detected. Would prompt to install via Homebrew cask or direct .dmg download."
+        echo "[DryRun] Brave not detected. Would print a reminder to download it manually."
         return
     fi
 
+    echo ""
     echo "Brave Browser was not found on this system."
-    local reply
-    reply="$(prompt_tty "Install it now? [Y/n] ")"
-    if [[ "$reply" =~ ^[Nn] ]]; then
-        echo "Skipping install. Policy settings will still be applied; profile preferences will be skipped until Brave has run at least once."
-        return
-    fi
-
-    local method
-    method="$(prompt_tty "Install via: [1] Homebrew cask (recommended)  [2] Direct .dmg download  Choice [1]: ")"
-    [[ -z "$method" ]] && method="1"
-
-    local brew_bin
-    brew_bin="$(find_brew)"
-
-    if [[ "$method" == "1" && -z "$brew_bin" ]]; then
-        echo "Homebrew was not found for this user."
-        local brew_reply
-        brew_reply="$(prompt_tty "Install Homebrew now? [Y/n] ")"
-        if [[ "$brew_reply" =~ ^[Nn] ]]; then
-            echo "Falling back to direct .dmg download."
-            method="2"
-        else
-            echo "Installing Homebrew (this can take a few minutes)..."
-            run_as_user env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            brew_bin="$(find_brew)"
-        fi
-    fi
-
-    if [[ "$method" == "1" && -n "$brew_bin" ]]; then
-        echo "Installing Brave via Homebrew cask..."
-        run_as_user "$brew_bin" install --cask brave-browser
-    else
-        echo "Downloading Brave..."
-        local dmg="/tmp/Brave-Browser.dmg"
-        curl -fsSL -o "$dmg" "$BRAVE_DMG_URL"
-        local mount_point
-        mount_point="$(hdiutil attach "$dmg" -nobrowse -readonly | tail -1 | awk '{print $NF}')"
-        echo "Installing to /Applications..."
-        cp -R "$mount_point/Brave Browser.app" "/Applications/"
-        hdiutil detach "$mount_point" -quiet || true
-        rm -f "$dmg"
-    fi
-
-    if is_brave_installed; then
-        echo "Brave installed successfully."
-    else
-        echo "Brave installation could not be confirmed. Policy settings will still be applied."
-    fi
+    echo "Download and install it from: https://brave.com/download/"
+    echo "Policy settings will still be applied; profile preferences will be skipped until Brave has run at least once."
+    echo ""
 }
 
 stop_brave() {
@@ -292,7 +218,7 @@ stop_brave
 if [[ "$UNINSTALL" -eq 1 ]]; then
     remove_policies
 else
-    install_brave
+    show_install_reminder
     apply_policies
 fi
 

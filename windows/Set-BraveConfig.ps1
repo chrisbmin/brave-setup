@@ -60,10 +60,6 @@ $ProfilePrefs = [ordered]@{
     'brave.web_discovery_enabled'   = @{ On = $true; Off = $false }  # Web Discovery Project
 }
 
-# Stable, version-independent link to the latest stable system-wide silent installer
-# (GitHub's releases/latest/download redirect always resolves to the newest stable release).
-$BraveInstallerUrl = 'https://github.com/brave/brave-browser/releases/latest/download/BraveBrowserStandaloneSetup.exe'
-
 function Test-Admin {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
@@ -109,46 +105,19 @@ function Test-BraveInstalled {
     return [bool]($exePaths | Where-Object { Test-Path $_ })
 }
 
-function Install-Brave {
+function Show-InstallReminder {
     if (Test-BraveInstalled) { return }
 
     if ($DryRun) {
-        Write-Host "[DryRun] Brave not detected. Would prompt to install via winget or direct download."
+        Write-Host "[DryRun] Brave not detected. Would print a reminder to download it manually."
         return
     }
 
+    Write-Host ""
     Write-Host "Brave Browser was not found on this system." -ForegroundColor Yellow
-    $reply = Read-Host "Install it now? [Y/n]"
-    if ($reply -match '^(n|no)$') {
-        Write-Host "Skipping install. Policy settings will still be applied; profile preferences will be skipped until Brave has run at least once."
-        return
-    }
-
-    $method = Read-Host "Install via: [1] winget (recommended)  [2] Direct installer download  Choice [1]"
-    if ([string]::IsNullOrWhiteSpace($method)) { $method = '1' }
-
-    if ($method -eq '1' -and -not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Host "winget was not found on this system. Falling back to direct download." -ForegroundColor Yellow
-        $method = '2'
-    }
-
-    if ($method -eq '1') {
-        Write-Host "Installing Brave via winget..."
-        winget install --id Brave.Brave -e --silent --accept-package-agreements --accept-source-agreements
-    } else {
-        $installerPath = Join-Path $env:TEMP 'BraveBrowserStandaloneSetup.exe'
-        Write-Host "Downloading Brave installer..."
-        Invoke-WebRequest -Uri $BraveInstallerUrl -OutFile $installerPath
-        Write-Host "Running installer silently..."
-        Start-Process -FilePath $installerPath -ArgumentList '/silent', '/install' -Wait
-        Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
-    }
-
-    if (Test-BraveInstalled) {
-        Write-Host "Brave installed successfully." -ForegroundColor Green
-    } else {
-        Write-Host "Brave installation could not be confirmed. Policy settings will still be applied." -ForegroundColor Yellow
-    }
+    Write-Host "Download and install it from: https://brave.com/download/"
+    Write-Host "Policy settings will still be applied; profile preferences will be skipped until Brave has run at least once."
+    Write-Host ""
 }
 
 function Set-Policies {
@@ -289,7 +258,7 @@ if ($Uninstall) {
     Set-JsonFilePrefs -Path (Get-LocalStatePath) -Prefs $LocalStatePrefs -Enable $false
     Set-JsonFilePrefs -Path (Get-ProfilePreferencesPath) -Prefs $ProfilePrefs -Enable $false
 } else {
-    Install-Brave
+    Show-InstallReminder
     Write-Host "Applying Brave policy settings..." -ForegroundColor Cyan
     Stop-Brave
     Set-Policies

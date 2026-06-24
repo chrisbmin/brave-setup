@@ -81,29 +81,10 @@ Brave first.
 ## Installing Brave (when it's missing)
 
 `Set-BraveConfig.ps1` / `set-brave-config.sh` check whether Brave is already
-installed before touching anything install-related. If it's missing, they prompt
-before doing anything — install now or skip — and if you say yes, prompt again for
-the method:
-
-- **Windows**: `winget install --id Brave.Brave -e --silent` (the official winget
-  package; confirmed via its
-  [manifest](https://github.com/microsoft/winget-pkgs/blob/master/manifests/b/Brave/Brave/137.1.79.119/Brave.Brave.installer.yaml)),
-  or a direct download of Brave's official standalone installer from
-  `https://github.com/brave/brave-browser/releases/latest/download/BraveBrowserStandaloneSetup.exe`
-  run with `/silent /install` (same switches the winget manifest uses internally).
-- **macOS**: `brew install --cask brave-browser` (installing Homebrew itself first,
-  with a separate confirmation, if it's not present), or a direct download of
-  `https://github.com/brave/brave-browser/releases/latest/download/Brave-Browser-universal.dmg`,
-  mounted and copied to `/Applications` directly.
-
-Both download URLs use GitHub's `releases/latest/download/<asset>` redirect, which
-always resolves to the current stable release — confirmed against Brave's actual
-[latest release](https://github.com/brave/brave-browser/releases/latest), not
-guessed or version-pinned.
-
-Declining the install prompt doesn't abort the script — policy settings are still
-applied (harmless either way), and the JSON pref edits just no-op until Brave has
-been installed and run at least once.
+installed. If it's missing, they just print a link to
+[brave.com/download](https://brave.com/download/) and continue — policy settings
+are still applied (harmless either way), and the JSON pref edits just no-op until
+Brave has been installed and run at least once.
 
 ### Not scripted — set these by hand
 

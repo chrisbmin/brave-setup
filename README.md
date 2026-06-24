@@ -20,10 +20,10 @@ default search engine for Normal/Private windows) have no safe, stable key to
 script — see the bottom of [`policies-reference.md`](policies-reference.md) for why
 and the couple of clicks needed to set them by hand.
 
-If Brave isn't installed yet, the setup script checks for it first and asks before
-doing anything: install now (and via winget/Homebrew cask or a direct download), or
-skip and just apply the settings for next time. It never installs anything without
-that prompt.
+If Brave isn't installed yet, the setup script checks for it first and just prints
+a reminder to grab it from [brave.com/download](https://brave.com/download/) —
+policy settings still get applied either way, and the JSON pref edits take effect
+the first time you run Brave afterward.
 
 **Before piping any of this into your shell**: read the script first. That's good
 practice for any `irm | iex` / `curl | bash` installer, not just this one — all
@@ -43,9 +43,9 @@ irm https://raw.githubusercontent.com/chrisbmin/brave-setup/main/windows/Set-Bra
 ```
 
 The script will relaunch itself elevated (UAC prompt) since writing the policy
-requires admin rights. If Brave isn't found, it'll ask whether to install it (via
-winget or a direct download of Brave's official standalone installer) before
-applying settings.
+requires admin rights. If Brave isn't found, it'll print a link to
+[brave.com/download](https://brave.com/download/) and continue applying the
+policy settings anyway.
 
 ### macOS
 
@@ -54,8 +54,8 @@ curl -fsSL https://raw.githubusercontent.com/chrisbmin/brave-setup/main/macos/se
 ```
 
 `sudo` is required up front to write the managed-preferences plist. If Brave isn't
-found, it'll ask whether to install it (via a Homebrew cask, installing Homebrew
-itself first if needed, or a direct `.dmg` download) before applying settings.
+found, it'll print a link to [brave.com/download](https://brave.com/download/) and
+continue applying the policy settings anyway.
 
 Once the repo is public, wrap either raw URL above in a shortlink (e.g. a
 custom domain or bit.ly/tinyurl) for easier typing/sharing.
